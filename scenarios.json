@@ -1,0 +1,62 @@
+{
+	"scenarios": {
+	    "QuickNavBookStore": {
+	      "robotEnvironmentVariables": {
+	        "ROS_AWS_REGION": "us-east-1"
+	      },
+	      "simEnvironmentVariables": {
+	        "ROS_AWS_REGION": "us-east-1",
+	        "TURTLEBOT3_MODEL": "waffle_pi",
+	        "NAVIGATION_SUCCESS_COUNT": "1",
+	        "SIMULATION_WORLD": "bookstore"
+	      }
+	    },
+	    "MultiNavBookStore": {
+	      "robotEnvironmentVariables": {
+	        "ROS_AWS_REGION": "us-east-1"
+	      },
+	      "simEnvironmentVariables": {
+	        "ROS_AWS_REGION": "us-east-1",
+	        "TURTLEBOT3_MODEL": "waffle_pi",
+	        "NAVIGATION_SUCCESS_COUNT": "3",
+	        "SIMULATION_WORLD": "bookstore"
+	      }
+	    }
+	},
+	"simulations": [{
+		"scenarios": [
+			"MultiNavBookStore",
+	                "QuickNavBookStore"
+	             ],
+		"params": {
+			"failureBehavior": "Fail",
+			"iamRole": "arn:aws:iam::498889106520:role/ec2-instance-builder",
+			"maxJobDurationInSeconds": 600,
+			"outputLocation": {
+				"s3Bucket": "ros-cicd-bucket",
+				"s3Prefix": "sim_ws"
+			},
+			"robotApplications": [{
+				"application": "arn:aws:robomaker:us-east-1:498889106520:robot-application/robomaker-cicd-robot-app/1668250129695",
+				"applicationVersion": "$LATEST",
+				"launchConfig": {
+					"launchFile": "await_commands.launch",
+					"packageName": "cloudwatch_robot"
+				}
+			}],
+			"simulationApplications": [{
+				"application": "arn:aws:robomaker:us-east-1:498889106520:simulation-application/robomaker-cicd-sim-app/1668250541357",
+				"applicationVersion": "$LATEST",
+				"launchConfig": {
+                    "packageName": "cloudwatch_simulation",
+                    "launchFile": "worlds.launch"
+				}
+			}],
+			"vpcConfig": {
+				"assignPublicIp": true,
+				"subnets": [ "subnet-05c69fd197cd4a9fd", "subnet-0f03ec01d691f5807" ],
+            	                "securityGroups": [ "sg-04447ee21431760d5" ]
+			}
+		}
+	}]
+}
