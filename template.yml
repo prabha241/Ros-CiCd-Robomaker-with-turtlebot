@@ -63,6 +63,38 @@ Parameters:
         Type: String
         Default: "bundles/x86/simulationApp.tar"
 Resources:
+  RobotApplication:
+    Type: "AWS::RoboMaker::RobotApplication"
+    Properties:
+      Sources:
+        - S3Bucket: !Ref S3Bucket
+          S3Key: !Ref RobotAppBundleS3KeyName
+          Architecture: "X86_64"
+      RobotSoftwareSuite:
+        Name: "ROS"
+        Version: !Ref ROSDistro
+      Tags:
+        "Name" : "RobotApplication"
+        "Type" : "CICD_Auto_Generate"
+  SimulationApplication:
+    Type: "AWS::RoboMaker::SimulationApplication"
+    Properties:
+      Sources:
+        - S3Bucket: !Ref S3Bucket
+          S3Key: !Ref SimulationAppBundleS3KeyName
+          Architecture: "X86_64"
+      RobotSoftwareSuite:
+        Name: "ROS"
+        Version: !Ref ROSDistro
+      SimulationSoftwareSuite:
+        Name: "Gazebo"
+        Version: !Ref GazeboVersion
+      RenderingEngine:
+        Name: "OGRE"
+        Version: "1.x"
+      Tags:
+        "Name" : "SimulationApplication"
+        "Type" : "CICD_Auto_Generate"
   VPC: 
     Type: AWS::EC2::VPC
     Properties:
@@ -290,8 +322,8 @@ Resources:
       Environment:
         Variables:
           S3_BUCKET: !Ref S3Bucket
-          ROBOT_APP_ARN: arn:aws:robomaker:us-east-1:498889106520:robot-application/robomaker-cicd-robot-app/1668250129695
-          SIMULATION_APP_ARN: arn:aws:robomaker:us-east-1:498889106520:simulation-application/robomaker-cicd-sim-app/1668250541357
+          ROBOT_APP_ARN: !Ref RobotApplication
+          SIMULATION_APP_ARN: !Ref SimulationApplication
           IAM_ROLE: !GetAtt RoboMakerSimulationRole.Arn
           SUBNET_1: !Ref PublicSubnet1
           SUBNET_2: !Ref PublicSubnet2
