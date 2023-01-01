@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   rosgraph_msgs
+  robomaker_simulation_msgs
 )
 
 ################################################################################
